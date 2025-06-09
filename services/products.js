@@ -53,3 +53,14 @@ export async function updateProduct(prodId, title, desc, price) {
     return null;
   }
 }
+
+// DELETE PRODUCT
+export async function deleteProduct(prodId) {
+  try {
+    const deletedProduct = await Product.findOneAndDelete({ prodId });
+    return deletedProduct;
+  } catch (error) {
+    console.error(error.message);
+    return null;
+  }
+}

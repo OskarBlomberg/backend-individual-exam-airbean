@@ -4,6 +4,7 @@ import {
   addNewProduct,
   updateProduct,
   getProduct,
+  deleteProduct,
 } from "../services/products.js";
 import isAdmin from "../middlewares/isAdmin.js";
 import validateMenuBody from "../middlewares/validateMenuBody.js";
@@ -53,7 +54,6 @@ router.put("/:id", isAdmin, validateMenuBody, async (req, res, next) => {
   const { title, desc, price } = req.body;
 
   const productExists = await getProduct(id);
-
   if (!productExists) {
     next({
       status: 404,
@@ -73,6 +73,37 @@ router.put("/:id", isAdmin, validateMenuBody, async (req, res, next) => {
     next({
       status: 500,
       message: "Could not update product",
+    });
+  }
+});
+
+// DELETE product by id
+router.delete("/:id", isAdmin, async (req, res, next) => {
+  const { id } = req.params;
+
+  const productExists = await getProduct(id);
+  if (!productExists) {
+    next({
+      status: 404,
+      message: "No product with that id found",
+    });
+    return;
+  }
+
+  const deletedProduct = await deleteProduct(id);
+
+  if (deletedProduct) {
+    res.json({
+      success: true,
+      removed: {
+        prodId: deletedProduct.prodId,
+        title: deletedProduct.title,
+      },
+    });
+  } else {
+    next({
+      status: 500,
+      message: "Could not delete product",
     });
   }
 });
