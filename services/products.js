@@ -38,3 +38,18 @@ export async function addNewProduct(title, desc, price) {
     return null;
   }
 }
+
+// UPDATE PRODUCT
+export async function updateProduct(prodId, title, desc, price) {
+  try {
+    const updatedProduct = await Product.findOneAndUpdate(
+      { prodId },
+      { title, desc, price },
+      { new: true }
+    );
+    return updatedProduct;
+  } catch (error) {
+    console.error(error.message);
+    return null;
+  }
+}
