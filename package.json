@@ -1,8 +1,8 @@
 {
-  "name": "gruppexamination-backend-airbean",
+  "name": "backend-individual-exam-airbean",
   "version": "1.0.0",
   "type": "module",
-  "description": "Hejsan alla i gruppen",
+  "description": "Working with databases with node.js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,8 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
     "nodemon": "^3.1.10",
     "uuid": "^11.1.0"
