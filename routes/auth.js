@@ -1,6 +1,10 @@
 import { Router } from "express";
 import validateAuthBody from "../middlewares/validateAuthBody.js";
-import { checkIfUsernameExists, registerUser } from "../services/users.js";
+import {
+  checkIfUsernameExists,
+  isRoleCorrect,
+  registerUser,
+} from "../services/users.js";
 
 const router = Router();
 
@@ -37,6 +41,16 @@ router.post("/register", validateAuthBody, async (req, res, next) => {
       status: 409,
       message: "Username already taken",
     });
+    return;
+  }
+
+  const correctRole = await isRoleCorrect(role);
+  if (!correctRole) {
+    next({
+      status: 400,
+      message: "Provide a role that is either 'admin' or 'user'",
+    });
+    return;
   }
 
   const newUser = await registerUser(username, password, role);

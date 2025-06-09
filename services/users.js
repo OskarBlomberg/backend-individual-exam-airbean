@@ -21,20 +21,24 @@ export async function checkIfUsernameExists(username) {
   }
 }
 
+export async function isRoleCorrect(role) {
+  if (role === "admin" || role === "user") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export async function registerUser(username, password, role) {
   try {
-    let userRole = "user";
-    if (role === "admin") {
-      userRole = role;
-    }
     const shortUuid = uuidv4().split("-")[0];
-    const userId = `${userRole}-${shortUuid}`;
+    const userId = `${role}-${shortUuid}`;
 
     const newUser = new User({
       username,
       password,
       userId,
-      role: userRole,
+      role,
     });
 
     await newUser.save();
