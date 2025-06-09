@@ -1,11 +1,11 @@
-import { Router } from 'express';
-import validateAuthBody from '../middlewares/validateAuthBody.js';
-import { checkIfUsernameExists, registerUser } from '../services/users.js';
+import { Router } from "express";
+import validateAuthBody from "../middlewares/validateAuthBody.js";
+import { checkIfUsernameExists, registerUser } from "../services/users.js";
 
 const router = Router();
 
 // LOGIN
-router.post('/login', validateAuthBody, async (req, res, next) => {
+router.post("/login", validateAuthBody, async (req, res, next) => {
   const { username, password } = req.body;
   const user = await checkIfUsernameExists(username);
 
@@ -13,7 +13,7 @@ router.post('/login', validateAuthBody, async (req, res, next) => {
     global.user = user;
     res.json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       user: {
         userId: user.userId,
         username: user.username,
@@ -22,29 +22,29 @@ router.post('/login', validateAuthBody, async (req, res, next) => {
   } else {
     next({
       status: 401,
-      message: 'Wrong username or password',
+      message: "Wrong username or password",
     });
   }
 });
 
 // REGISTER
-router.post('/register', validateAuthBody, async (req, res, next) => {
-  const { username, password } = req.body;
+router.post("/register", validateAuthBody, async (req, res, next) => {
+  const { username, password, role } = req.body;
   const isUsernameTaken = await checkIfUsernameExists(username);
 
   if (isUsernameTaken) {
     next({
       status: 409,
-      message: 'Username already taken',
+      message: "Username already taken",
     });
   }
 
-  const newUser = await registerUser(username, password);
+  const newUser = await registerUser(username, password, role);
 
   if (newUser) {
     res.status(201).json({
       success: true,
-      message: 'Registration successful!',
+      message: "Registration successful!",
       user: {
         username,
         userId: newUser.userId,
@@ -53,17 +53,17 @@ router.post('/register', validateAuthBody, async (req, res, next) => {
   } else {
     next({
       status: 500,
-      message: 'Could not register new user',
+      message: "Could not register new user",
     });
   }
 });
 
 // LOGOUT
-router.get('/logout', (_req, res) => {
+router.get("/logout", (_req, res) => {
   global.user = null;
   res.json({
     success: true,
-    message: 'Logged out successfully',
+    message: "Logged out successfully",
   });
 });
 
