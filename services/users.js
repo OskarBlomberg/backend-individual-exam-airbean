@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import User from "../models/user.js";
 
@@ -31,12 +32,14 @@ export async function isRoleCorrect(role) {
 
 export async function registerUser(username, password, role) {
   try {
+    const hashed = await bcrypt.hash(password, 10);
+
     const shortUuid = uuidv4().split("-")[0];
     const userId = `${role}-${shortUuid}`;
 
     const newUser = new User({
       username,
-      password,
+      password: hashed,
       userId,
       role,
     });

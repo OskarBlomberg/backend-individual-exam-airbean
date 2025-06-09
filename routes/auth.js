@@ -5,24 +5,37 @@ import {
   isRoleCorrect,
   registerUser,
 } from "../services/users.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
 // LOGIN
 router.post("/login", validateAuthBody, async (req, res, next) => {
   const { username, password } = req.body;
+
   const user = await checkIfUsernameExists(username);
 
-  if (user && user.password === password) {
-    global.user = user;
-    res.json({
-      success: true,
-      message: "Login successful",
-      user: {
+  if (user) {
+    const isMatching = await bcrypt.compare(password, user.password);
+    if (isMatching) {
+      const payload = { userId: user.userId, role: user.role };
+      const token = jwt.sign(payload, process.env.PRIVATE_KEY, {
+        expiresIn: 60 * 10,
+      });
+
+      res.json({
+        success: true,
+        message: `Welcome back, ${user.username}`,
         userId: user.userId,
-        username: user.username,
-      },
-    });
+        token: `Bearer ${token}`,
+      });
+    } else {
+      next({
+        status: 401,
+        message: "Wrong username or password",
+      });
+    }
   } else {
     next({
       status: 401,
@@ -74,7 +87,6 @@ router.post("/register", validateAuthBody, async (req, res, next) => {
 
 // LOGOUT
 router.get("/logout", (_req, res) => {
-  global.user = null;
   res.json({
     success: true,
     message: "Logged out successfully",
