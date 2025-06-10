@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import User from "../models/user.js";
 
@@ -47,6 +48,18 @@ export async function registerUser(username, password, role) {
     await newUser.save();
 
     return newUser;
+  } catch (error) {
+    console.error(error.message);
+    return null;
+  }
+}
+
+export async function decryptToken(authorization) {
+  const token = authorization.replace("Bearer ", "");
+
+  try {
+    const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+    return decoded;
   } catch (error) {
     console.error(error.message);
     return null;
