@@ -17,8 +17,8 @@ export default function isAdmin(req, _res, next) {
       }
     } catch (error) {
       next({
-        status: 400,
-        message: "Invalid token",
+        status: 401,
+        message: "Invalid or expired token",
       });
     }
   } else {
