@@ -22,7 +22,7 @@ components:
           type: string
           example: Som en espressoshot - lika mycket kaffepulver, men halva mängden vatten
         price:
-          type: float
+          type: number
           example: 45
 
     MenuItem:
@@ -39,7 +39,7 @@ components:
           type: string
           example: Som en espressoshot - lika mycket kaffepulver, men halva mängden vatten
         price:
-          type: float
+          type: number
           example: 50
         _id:
           type: string
@@ -51,7 +51,7 @@ components:
           type: string
           example: 2025-06-09T20:11:48.855Z
         __v:
-          type: float
+          type: number
           example: 0
 
   securitySchemes:
