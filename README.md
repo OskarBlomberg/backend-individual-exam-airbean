@@ -6,6 +6,14 @@ Fokus ligger på backend – **ingen frontend** ska byggas.
 
 ---
 
+## Hur man använder api:et
+
+För att kunna göra anrop krävs en .env-fil på rooot-nivå med följande information:
+
+- PORT: <en öppen port, t.ex. 8080>
+- CONNECTION_STRING: <Adressen till ett MongoDB-api, inklusive användarnamn och lösenord>
+- PRIVATE_KEY: <En sträng man använder för att kryptera och avkryptera de user tokens man får när man loggar in, vilket behövs för att kunna använda admin-tjänsterna.>
+
 ## 🧩 Uppgiften
 
 Du ska bygga tre skyddade endpoints där en admin kan:
