@@ -17,12 +17,12 @@ components:
       properties:
         title:
           type: string
-          example: Matcha latte
+          example: Ristretto
         desc:
           type: string
-          example: En uppiggande dryck med pulveriserat grönt japanskt te.
+          example: Som en espressoshot - lika mycket kaffepulver, men halva mängden vatten
         price:
-          type: integer
+          type: float
           example: 45
 
     MenuItem:
@@ -34,12 +34,12 @@ components:
           example: prod-a10e6
         title:
           type: string
-          example: Matcha latte
+          example: Ristretto
         desc:
           type: string
-          example: En uppiggande dryck med pulveriserat grönt japanskt te.
+          example: Som en espressoshot - lika mycket kaffepulver, men halva mängden vatten
         price:
-          type: integer
+          type: float
           example: 50
         _id:
           type: string
@@ -370,7 +370,7 @@ paths:
                         example: prod-a10e6
                       title:
                         type: string
-                        example: Matcha latte
+                        example: Ristretto
 
         404:
           $ref: "#/components/responses/NotFoundError"

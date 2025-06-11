@@ -1,7 +1,11 @@
 export default function validateMenuBody(req, res, next) {
   if (req.body) {
     const { title, desc, price } = req.body;
-    if (title && desc && price) {
+    if (
+      typeof title === "string" &&
+      typeof desc === "string" &&
+      typeof price === "number"
+    ) {
       next();
     } else {
       res.status(400).json({
