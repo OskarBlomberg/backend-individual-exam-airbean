@@ -6,7 +6,14 @@ export default function validateMenuBody(req, res, next) {
       typeof desc === "string" &&
       typeof price === "number"
     ) {
-      next();
+      if (price >= 0) {
+        next();
+      } else {
+        res.status(400).json({
+          success: false,
+          message: "Price may not be a negative number",
+        });
+      }
     } else {
       res.status(400).json({
         success: false,
