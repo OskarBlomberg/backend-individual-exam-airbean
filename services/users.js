@@ -1,5 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
-import User from '../models/user.js';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import User from "../models/user.js";
 
 export async function checkIfUserExists(userId) {
   try {
@@ -21,20 +23,43 @@ export async function checkIfUsernameExists(username) {
   }
 }
 
-export async function registerUser(username, password) {
+export async function isRoleCorrect(role) {
+  if (role === "admin" || role === "user") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export async function registerUser(username, password, role) {
   try {
-    const shortUuid = uuidv4().split('-')[0];
-    const userId = `user-${shortUuid}`;
+    const hashed = await bcrypt.hash(password, 10);
+
+    const shortUuid = uuidv4().split("-")[0];
+    const userId = `${role}-${shortUuid}`;
 
     const newUser = new User({
       username,
-      password,
+      password: hashed,
       userId,
+      role,
     });
 
     await newUser.save();
 
     return newUser;
+  } catch (error) {
+    console.error(error.message);
+    return null;
+  }
+}
+
+export async function decryptToken(authorization) {
+  const token = authorization.replace("Bearer ", "");
+
+  try {
+    const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+    return decoded;
   } catch (error) {
     console.error(error.message);
     return null;

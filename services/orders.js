@@ -1,4 +1,4 @@
-import Order from '../models/Order.js';
+import Order from "../models/order.js";
 
 export async function getAllOrders() {
   try {

@@ -1,0 +1,376 @@
+openapi: 3.0.4
+info:
+  title: Airbean API
+  description: API documentation for authentication and admin endpoints of backend course individual exam.
+  version: 1.0.0
+
+components:
+  schemas:
+    ProdId:
+      description: Example of id to be put in query
+      type: string
+      example: prod-a10e6
+
+    MenuBody:
+      description: Example of information needed in body when adding or updating products
+      type: object
+      properties:
+        title:
+          type: string
+          example: Ristretto
+        desc:
+          type: string
+          example: Som en espressoshot - lika mycket kaffepulver, men halva mängden vatten
+        price:
+          type: number
+          example: 45
+
+    MenuItem:
+      description: Example of menu item in response
+      type: object
+      properties:
+        prodId:
+          type: string
+          example: prod-a10e6
+        title:
+          type: string
+          example: Ristretto
+        desc:
+          type: string
+          example: Som en espressoshot - lika mycket kaffepulver, men halva mängden vatten
+        price:
+          type: number
+          example: 50
+        _id:
+          type: string
+          example: 68474004c77e69c94257e237
+        createdAt:
+          type: string
+          example: 2025-06-09T20:11:48.855Z
+        updatedAt:
+          type: string
+          example: 2025-06-09T20:11:48.855Z
+        __v:
+          type: number
+          example: 0
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequestError:
+      description: Incorrect or missing user input
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: No body found in request
+
+    NotFoundError:
+      description: No content found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: No products with that id found
+
+paths:
+  # AUTH
+  # REGISTER
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      description: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: aliceinwonderland
+                password:
+                  type: string
+                  example: Thr0u6h7h3l00k1n66l455
+                role:
+                  type: string
+                  example: user
+
+      responses:
+        201:
+          description: Response for successful registration.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Registration successful!
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: aliceinwonderland
+                      userId:
+                        type: string
+                        example: user-spv98ofl
+
+        400:
+          $ref: "#/components/responses/BadRequestError"
+
+        409:
+          description: Username conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Username already taken
+
+  # LOGIN
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      description: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: aliceinwonderland
+                password:
+                  type: string
+                  example: Thr0u6h7h3l00k1n66l455
+      responses:
+        200:
+          description: Response for successful login.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Welcome back, aliceinwonderland
+                  userId:
+                    type: string
+                    example: user-spv98ofl
+                  token:
+                    type: string
+                    example: Bearer 1234567...
+
+        400:
+          $ref: "#/components/responses/BadRequestError"
+
+        401:
+          description: Incorrect credentials provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Wrong username or password
+
+  #LOGOUT
+  /api/auth/logout:
+    get:
+      tags:
+        - Auth
+      description: Response for successful logout
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Logged out successfully
+
+  # MENU
+  # POST NEW ITEM
+  /api/menu/:
+    post:
+      tags:
+        - Menu
+      summary: Add menu item
+      description: Adds new item to menu
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer token required for authorization
+          required: true
+          schema:
+            type: string
+            example: Bearer 1234567...
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/MenuBody"
+      responses:
+        201:
+          description: Response for successfully added product.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Item added to menu
+                  newProduct:
+                    $ref: "#/components/schemas/MenuItem"
+
+        400:
+          $ref: "#/components/responses/BadRequestError"
+
+  # UPDATE ITEM
+  /api/menu/{prodId}:
+    put:
+      tags:
+        - Menu
+      summary: Update menu item
+      description: Updates existing item with provided id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: productId
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProdId"
+
+        - name: Authorization
+          in: header
+          description: Bearer token required for authorization
+          required: true
+          schema:
+            type: string
+            example: Bearer 1234567...
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/MenuBody"
+
+      responses:
+        200:
+          description: Response for successfully modified product.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  updatedItem:
+                    $ref: "#/components/schemas/MenuItem"
+
+        400:
+          $ref: "#/components/responses/BadRequestError"
+
+        404:
+          $ref: "#/components/responses/NotFoundError"
+
+    #DELETE ITEM
+    delete:
+      tags:
+        - Menu
+      description: Deletes an item with the provided id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: productId
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProdId"
+
+        - name: Authorization
+          in: header
+          description: Bearer token required for authorization
+          required: true
+          schema:
+            type: string
+            example: Bearer 1234567...
+
+      responses:
+        200:
+          description: Response for successfully deleted product.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  removed:
+                    type: object
+                    properties:
+                      prodId:
+                        type: string
+                        example: prod-a10e6
+                      title:
+                        type: string
+                        example: Ristretto
+
+        404:
+          $ref: "#/components/responses/NotFoundError"
